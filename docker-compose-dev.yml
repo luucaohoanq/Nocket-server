@@ -1,0 +1,79 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: lcaohoanq
+      POSTGRES_PASSWORD: Luucaohoang1604^^
+      POSTGRES_DB: nocket
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nocket_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: hoangclw@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+    networks:
+      - nocket_network
+
+  redis-container:
+    image: docker.io/redis:7.2.3
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data # Mount a volume for Redis data persistence
+    networks:
+      - nocket_network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus_koi_development
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    volumes:
+      - ./config/prometheus:/etc/prometheus
+    networks:
+      - nocket_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # connection Prometheus server URL
+  # http://prometheus:9090(prometheus is the service name)
+  # not use localhost because localhost refer to grafana itself
+  grafana:
+    image: grafana/grafana
+    container_name: grafana_koi_development
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=sysadmin
+      - GF_SECURITY_ADMIN_PASSWORD=sysadmin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - nocket_network
+
+networks:
+  nocket_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  grafana_data:
+    driver: local
