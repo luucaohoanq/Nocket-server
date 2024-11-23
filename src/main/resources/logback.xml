@@ -31,7 +31,7 @@
     </root>
 
     <!-- Application specific logger -->
-    <logger name="com.swp391.koibe" level="DEBUG" additivity="false">
+    <logger name="com.lcaohoanq.nocket" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </logger>
